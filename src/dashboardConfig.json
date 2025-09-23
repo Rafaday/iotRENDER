@@ -1,0 +1,226 @@
+{
+  "title": "Dashboard IoT de Proyecto Demostración",
+  "rows": [
+    {
+      "id": "rowPrincipalControles",
+      "columns": [
+        {
+          "id": "colControlesA",
+          "span": 4,
+          "widgets": [
+            {
+              "id": "powerSwitch",
+              "type": "SwitchWidget",
+              "label": "Estado del Sistema Central",
+              "action": "systemPower",
+              "initialState": "OFF",
+              "onText": "ACTIVO",
+              "offText": "INACTIVO",
+              "pendingText": "CAMBIANDO...",
+              "onValue": "START",
+              "offValue": "STOP",
+              "confirmationTimeout": 4000
+            }
+          ]
+        },
+        {
+          "id": "colControlesB",
+          "span": 4,
+          "widgets": [
+            {
+              "id": "mainLedOnBtn",
+              "type": "ButtonWidget",
+              "label": "Encender Luz Principal",
+              "action": "toggleMainLight",
+              "value": "ON",
+              "variant": "success"
+            },
+            {
+              "id": "mainLedOffBtn",
+              "type": "ButtonWidget",
+              "label": "Apagar Luz Principal",
+              "action": "toggleMainLight",
+              "value": "OFF",
+              "variant": "danger"
+            }
+          ]
+        },
+        {
+          "id": "colControlesC",
+          "span": 4,
+          "widgets": [
+            {
+              "id": "systemAlertLed",
+              "type": "LedWidget",
+              "label": "Alerta Crítica",
+              "initialState": "OFF",
+              "onColorClass": "bg-danger",
+              "offColorClass": "bg-success",
+              "onText": "¡ALERTA!",
+              "offText": "NORMAL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rowValoresSensores",
+      "columns": [
+        {
+          "id": "colSensorTemp",
+          "span": 4,
+          "widgets": [
+            {
+              "id": "currentTemperatureDisplay",
+              "type": "DisplayWidget",
+              "label": "Temperatura Ambiente",
+              "unit": "°C",
+              "decimalPlaces": 1,
+              "initialValue": 22.5
+            },
+            {
+              "id": "tempThresholdInput",
+              "type": "TextInputWidget",
+              "label": "Establecer Alerta Temp.",
+              "inputLabel": "Umbral (°C):",
+              "action": "setTempThreshold",
+              "inputType": "number",
+              "placeholder": "28",
+              "sendButtonLabel": "Fijar",
+              "variant": "warning",
+              "min": 0,
+              "max": 50,
+              "step": 0.1
+            }
+          ]
+        },
+        {
+          "id": "colSensorHum",
+          "span": 4,
+          "widgets": [
+            {
+              "id": "currentHumidityDisplay",
+              "type": "DisplayWidget",
+              "label": "Humedad Relativa",
+              "unit": "%",
+              "decimalPlaces": 0,
+              "initialValue": 60
+            }
+          ]
+        },
+        {
+          "id": "colSensorBateria",
+          "span": 4,
+          "widgets": [
+            {
+              "id": "batteryLevelCircular",
+              "type": "CircularDisplayWidget",
+              "label": "Batería del Dispositivo",
+              "initialValue": 85,
+              "size": 150,
+              "strokeWidth": 15,
+              "bgColor": "#e0e0e0",
+              "progressColor": "#0d6efd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rowGraficos",
+      "columns": [
+        {
+          "id": "colGraphADC",
+          "span": 6,
+          "widgets": [
+            {
+              "id": "adcGraph",
+              "type": "ApexGraphWidget",
+              "label": "Evolución Lectura ADC",
+              "dataLabel": "ADC Value",
+              "unit": "mV",
+              "unitSuffix": " mV",
+              "maxDataPoints": 200,
+              "canvasHeight": 300,
+              "borderColor": "#17a2b8",
+              "backgroundColor": "rgba(23, 162, 184, 0.2)",
+              "fillType": "gradient",
+              "curve": "smooth",
+              "animationSpeed": 600,
+              "timeRange": 40000,
+              "updateInterval": 200,
+              "yAxisDecimalPlaces": 0,
+              "tooltipDecimalPlaces": 0,
+              "minY": 0,
+              "maxY": 4095
+            }
+          ]
+        },
+        {
+          "id": "colGraphTemperatura",
+          "span": 6,
+          "widgets": [
+            {
+              "id": "temperatureGraph",
+              "type": "ApexGraphWidget",
+              "label": "Historial de Temperatura",
+              "dataLabel": "Temp",
+              "unit": "°C",
+              "unitSuffix": " °C",
+              "maxDataPoints": 100,
+              "canvasHeight": 300,
+              "borderColor": "#fd7e14",
+              "backgroundColor": "rgba(253, 126, 20, 0.2)",
+              "fillType": "solid",
+              "curve": "straight",
+              "animationSpeed": 800,
+              "timeRange": 60000,
+              "updateInterval": 1000,
+              "yAxisDecimalPlaces": 1,
+              "tooltipDecimalPlaces": 1,
+              "minY": 15,
+              "maxY": 35
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rowControlesAdicionales",
+      "columns": [
+        {
+          "id": "colSliderLuz",
+          "span": 6,
+          "widgets": [
+            {
+              "id": "lightIntensitySlider",
+              "type": "SliderWidget",
+              "label": "Intensidad Luz Auxiliar",
+              "inputLabel": "Nivel (0-100%):",
+              "action": "setAuxLight",
+              "min": 0,
+              "max": 100,
+              "step": 5,
+              "initialValue": 70
+            }
+          ]
+        },
+        {
+          "id": "colModalButton",
+          "span": 6,
+          "widgets": [
+            {
+              "id": "motorControlModalBtn",
+              "type": "DashboardModalButtonWidget",
+              "label": "Acciones de Motor y Sensores",
+              "buttonText": "Abrir Panel Avanzado",
+              "modalTitle": "Panel de Control de Motor",
+              "dashboardJsonPath": "Dashboards/miniDashboard1.json",
+              "variant": "primary"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

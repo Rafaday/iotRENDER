@@ -1,0 +1,85 @@
+{
+    "title": "Panel de Control de Motor",
+    "rows": [
+        {
+            "id": "motorModalRow1",
+            "columns": [
+                {
+                    "id": "motorModalCol1",
+                    "span": 6,
+                    "widgets": [
+                        {
+                            "id": "motorPowerSwitch",
+                            "type": "SwitchWidget",
+                            "label": "Estado del Motor",
+                            "action": "motorControl",
+                            "initialState": "OFF",
+                            "onText": "MOTOR ON",
+                            "offText": "MOTOR OFF",
+                            "pendingText": "ARRANCANDO...",
+                            "onValue": "MOTOR_START",
+                            "offValue": "MOTOR_STOP",
+                            "variant": "info",
+                            "confirmationTimeout": 4000
+                        },
+                        {
+                            "id": "motorSpeedSlider",
+                            "type": "SliderWidget",
+                            "label": "Velocidad del Motor",
+                            "inputLabel": "Velocidad (0-255):",
+                            "action": "setMotorSpeed",
+                            "min": 0,
+                            "max": 255,
+                            "step": 5,
+                            "initialValue": 100
+                        },
+                        {
+                            "id": "motorRunTime",
+                            "type": "DisplayWidget",
+                            "label": "Tiempo de Ejecución",
+                            "unit": "s",
+                            "decimalPlaces": 0,
+                            "initialValue": 0
+                        }
+                    ]
+                },
+                {
+                    "id": "motorModalCol2",
+                    "span": 6,
+                    "widgets": [
+                        {
+                            "id": "motorStatusLed",
+                            "type": "LedWidget",
+                            "label": "Motor Operando",
+                            "initialState": "OFF",
+                            "onColorClass": "bg-primary",
+                            "offColorClass": "bg-secondary",
+                            "onText": "OPERANDO",
+                            "offText": "DETENIDO"
+                        },
+                        {
+                            "id": "motorVoltageDisplay",
+                            "type": "DisplayWidget",
+                            "label": "Voltaje del Motor",
+                            "unit": "V",
+                            "decimalPlaces": 2,
+                            "initialValue": 12.35
+                        },
+                        {
+                            "id": "motorCurrentInput",
+                            "type": "TextInputWidget",
+                            "label": "Corriente Máxima (A)",
+                            "inputLabel": "Max. Corriente:",
+                            "action": "setMaxCurrent",
+                            "inputType": "number",
+                            "placeholder": "1.5",
+                            "sendButtonLabel": "Fijar",
+                            "variant": "dark",
+                            "min": 0, "max": 10, "step": 0.1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
