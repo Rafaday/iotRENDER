@@ -1,4 +1,8 @@
-**iotRENDER** is a lightweight framework for creating modular and configurable web dashboards, designed for real-time monitoring and control of IoT projects based on microcontrollers (such as ESP32/ESP8266) through WebSocket communication. It allows users to fully define the user interface (UI) and interaction logic using JSON files, making customization and local deployment simple.
+> ⚠️ **Warning**  
+> This script is in an early stage of development.  
+> It is **unstable** and may not work properly.
+
+**iotRENDER**v0.0.0.1  is a lightweight framework for creating modular and configurable web dashboards, designed for real-time monitoring and control of IoT projects based on microcontrollers (such as ESP32/ESP8266) through WebSocket communication. It allows users to fully define the user interface (UI) and interaction logic using JSON files, making customization and local deployment simple.
 
 ![Screenshot](./docs/img/principal.png)
 
@@ -27,3 +31,4 @@
 ## 🚀 Getting Started
 
 Follow [these steps](./docs/EN/index.md) to set up your iotRENDER dashboard.  
+
