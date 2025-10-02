@@ -5,13 +5,22 @@ const IOT_RENDERER = {
     websocket: null,
     messageBuffer: [], 
     dashboardFullyReady: false, 
-    currentModalInstance: null, // Para guardar la instancia del modal activo
-    modalDashboardAreaId: 'iot-modal-dashboard-area', // ID del div dentro del modal
+    currentModalInstance: null, 
+    modalDashboardAreaId: 'iot-modal-dashboard-area', 
 
-    /**
-     * Inicializa la conexión WebSocket.
-     * @param {string} url - La URL del servidor WebSocket.
-     */
+    attemptSendDashboardReady: function() {
+        if (this.dashboardFullyReady && this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+            console.log('DEBUG: Ambas condiciones (dashboard listo y WS abierto) cumplidas. Enviando DASHBOARD_READY.');
+            this.sendWebSocketMessage(JSON.stringify({
+                widgetId: "dashboard",
+                action: "DASHBOARD_READY",
+                value: "true"
+            }));
+        } else {
+            console.log(`DEBUG: Aún no listo para enviar DASHBOARD_READY. Dashboard Ready: ${this.dashboardFullyReady}, WS State: ${this.websocket ? this.websocket.readyState : 'null'}`);
+        }
+    },
+
     initWebSocket: function(url) {
         if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
             console.log('DEBUG: WebSocket ya está conectado. No se inicializa de nuevo.');
@@ -29,6 +38,8 @@ const IOT_RENDERER = {
 
             this.websocket.onopen = () => {
                 console.log('Conexión WebSocket establecida con:', url);
+                this.attemptSendDashboardReady(); 
+
                 if (this.dashboardFullyReady && this.messageBuffer.length > 0) {
                     console.log(`DEBUG: Procesando ${this.messageBuffer.length} mensajes en el buffer después de conectar.`);
                     this.messageBuffer.forEach(bufferedMessage => this.processIncomingMessage(bufferedMessage));
@@ -48,15 +59,21 @@ const IOT_RENDERER = {
                 try {
                     const data = JSON.parse(messageData);
 
-                    // Reenviar el mensaje al dashboard principal
                     const targetWidgetElement = document.getElementById(data.widgetId);
                     if (targetWidgetElement && typeof targetWidgetElement.updateState === 'function') {
                         targetWidgetElement.updateState(data.status);
                     } else {
-                        // console.warn(`WARN: Mensaje para widget '${data.widgetId}' recibido pero el widget no está listo o no tiene updateState.`);
+                        console.warn(`WARN: Widget '${data.widgetId}' NO LISTO para updateState. Reenviando a buffer.`);
+                        IOT_RENDERER.messageBuffer.push(messageData);
+                        setTimeout(() => {
+                            if (IOT_RENDERER.messageBuffer.length > 0) {
+                                console.log('DEBUG: Reintentando procesar mensajes del buffer...');
+                                IOT_RENDERER.messageBuffer.forEach(bufferedMessage => IOT_RENDERER.processIncomingMessage(bufferedMessage));
+                                IOT_RENDERER.messageBuffer = [];
+                            }
+                        }, 500); 
                     }
 
-                    // Intentar actualizar el mismo widget si está en el modal (si el modal está abierto)
                     if (IOT_RENDERER.currentModalInstance && document.getElementById(IOT_RENDERER.modalDashboardAreaId)) {
                         const modalWidgetElement = document.getElementById(IOT_RENDERER.modalDashboardAreaId).querySelector(`#${data.widgetId}`);
                         if (modalWidgetElement && typeof modalWidgetElement.updateState === 'function') {
@@ -114,10 +131,6 @@ const IOT_RENDERER = {
         }
     },
 
-    /**
-     * Envía un mensaje a través del WebSocket.
-     * @param {string} message - El mensaje a enviar.
-     */
     sendWebSocketMessage: function(message) {
         if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
             this.websocket.send(message);
@@ -128,25 +141,15 @@ const IOT_RENDERER = {
             }
         } else {
             console.warn('WARN: WebSocket no está conectado o está cerrándose. No se pudo enviar el mensaje:', message);
-            alert('Error: WebSocket no conectado. Asegúrate de que tu Arduino está ejecutando el servidor WebSocket.');
+            // alert('Error: WebSocket no conectado. Asegúrate de que tu Arduino está ejecutando el servidor WebSocket.'); 
         }
     },
 
-    /**
-     * Registra un nuevo tipo de widget con su función de renderizado.
-     * @param {string} type - El nombre del tipo de widget.
-     * @param {function} renderFunction - La función que toma 'widgetConfig' y retorna un elemento DOM.
-     */
     registerWidget: function(type, renderFunction) {
         this.widgetRenderers[type] = renderFunction;
         console.log(`Widget '${type}' registrado.`);
     },
 
-    /**
-     * Renderiza un widget específico basado en su configuración.
-     * @param {object} widgetConfig - La configuración del widget del JSON.
-     * @returns {HTMLElement} El elemento DOM del widget renderizado.
-     */
     renderWidget: function(widgetConfig) {
         const renderer = this.widgetRenderers[widgetConfig.type];
         if (renderer) {
@@ -160,12 +163,6 @@ const IOT_RENDERER = {
         }
     },
 
-    /**
-     * Renderiza todo el dashboard basado en la configuración JSON.
-     * @param {object} dashboardConfig - El objeto de configuración JSON del dashboard.
-     * @param {string} targetElementId - El ID del elemento HTML donde se renderizará el dashboard.
-     * @returns {Promise<void>} Una promesa que se resuelve cuando el dashboard y sus widgets están listos.
-     */
     renderDashboard: function(dashboardConfig, targetElementId) {
         const isMainDashboard = (targetElementId === 'iot-dashboard-area');
         if (isMainDashboard) {
@@ -228,6 +225,8 @@ const IOT_RENDERER = {
             console.log(`DEBUG: Todos los postRender de widgets para '${dashboardConfig.title}' han finalizado.`);
             if (isMainDashboard) { 
                 this.dashboardFullyReady = true; 
+                this.attemptSendDashboardReady(); 
+
                 if (this.messageBuffer.length > 0) {
                     console.log(`DEBUG: Procesando ${this.messageBuffer.length} mensajes en el buffer después del renderizado completo.`);
                     this.messageBuffer.forEach(bufferedMessage => this.processIncomingMessage(bufferedMessage));
@@ -240,11 +239,6 @@ const IOT_RENDERER = {
         });
     },
 
-    /**
-     * Abre un modal y renderiza un dashboard en él.
-     * @param {string} modalTitle - Título del modal.
-     * @param {string} dashboardJsonPath - Ruta al archivo JSON del dashboard secundario.
-     */
     openDashboardModal: function(modalTitle, dashboardJsonPath) {
         const modalElement = document.getElementById('iotDashboardModal');
         if (!modalElement) {
@@ -296,9 +290,6 @@ const IOT_RENDERER = {
         }, { once: true });
     },
 
-    /**
-     * Cierra el modal de dashboard si está abierto.
-     */
     closeDashboardModal: function() {
         if (this.currentModalInstance) {
             this.currentModalInstance.hide();
