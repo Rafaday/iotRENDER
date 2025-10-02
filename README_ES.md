@@ -1,6 +1,6 @@
 > ⚠️ **Advertencia** > Este script está en una fase temprana de desarrollo. > Es **inestable** y puede no funcionar correctamente.
 
-**iotRENDER v0.0.1** es un framework ligero para crear dashboards web modulares y configurables, diseñado para la monitorización y control en tiempo real de proyectos IoT basados en microcontroladores (como ESP32/ESP8266) a través de comunicación WebSocket. Permite a los usuarios definir completamente la interfaz de usuario (UI) y la lógica de interacción mediante archivos JSON, facilitando la personalización y el despliegue local.
+**iotRENDER** es un framework ligero para crear dashboards web modulares y configurables, diseñado para la monitorización y control en tiempo real de proyectos IoT basados en microcontroladores (como ESP32/ESP8266) a través de comunicación WebSocket. Permite a los usuarios definir completamente la interfaz de usuario (UI) y la lógica de interacción mediante archivos JSON, facilitando la personalización y el despliegue local.
 
 ![Screenshot](./docs/img/principal.png)
 
@@ -31,6 +31,17 @@
 ## 🚀 Cómo Empezar
 
 Sigue [estos pasos](./docs/ES/index.md) para poner en marcha tu dashboard iotRENDER.
+
+
+## 📅 Actualizaciones
+
+### (2/10/2025) Sincronización Inicial más Robusta: Evento **DASHBOARD_READY**
+
+Se ha optimizado la sincronización inicial de los widgets, incluyendo el slider, para garantizar que al cargar o recargar un dashboard estos reflejen siempre el estado real del sistema.
+De esta manera se evita la presentación de valores inconsistentes en el arranque.
+
+➡️ Documentación ampliada disponible en [dashboard_ready.md](./docs/ES/dashboard_ready.md).
+
 
 
 
