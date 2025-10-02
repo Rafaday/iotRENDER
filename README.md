@@ -32,3 +32,14 @@
 
 Follow [these steps](./docs/EN/index.md) to set up your iotRENDER dashboard.  
 
+## 📅 Updates
+
+### (10/2/2025) More Robust Initial Synchronization: **DASHBOARD_READY** Event
+
+The initial synchronization of widgets, including the slider, has been improved to ensure they always reflect the system’s actual state when a dashboard is loaded or reloaded.
+This prevents inconsistent values from being displayed at startup.
+
+➡️ See **`[dashboard_ready.md](./docs/EN/dashboard_ready.md)`** for detailed documentation.
+
+
+
